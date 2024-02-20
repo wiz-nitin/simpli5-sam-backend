@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: simpli5-backend
+Transform:
+- AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    Cors:
+      AllowMethods: '''GET,POST,OPTIONS'''
+      AllowHeaders: '''*'''
+      AllowOrigin: '''*'''
+      AllowCredentials: '''*'''
+    GatewayResponses:
+      DEFAULT_4xx:
+        ResponseParameters:
+          Headers:
+            Access-Control-Allow-Methods: '''GET,POST,OPTIONS'''
+            Access-Control-Allow-Headers: '''*'''
+            Access-Control-Allow-Origin: '''*'''
+            Access-Control-Allow-Credentials: '''*'''
+      DEFAULT_5xx:
+        ResponseParameters:
+          Headers:
+            Access-Control-Allow-Methods: '''GET,POST,OPTIONS'''
+            Access-Control-Allow-Headers: '''*'''
+            Access-Control-Allow-Origin: '''*'''
+            Access-Control-Allow-Credentials: '''*'''
+  Function:
+    Environment:
+      Variables:
+        DB_URI: mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority
+    Runtime: nodejs16.x
+    MemorySize: 128
+    Timeout: 60
+Resources:
+  DBServiceLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: db-service-1
+      Description: DB Code shared across all lambda functions
+      ContentUri: ../../src/dbservice
+      CompatibleRuntimes:
+      - nodejs16.x
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+  userLogin:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: userLogin
+      Handler: userLogin.lambdaHandler
+      Description: A Lambda function that register the user.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/login
+            Method: POST
+      Layers:
+      - Ref: DBServiceLayer
+    Metadata:
+      BuildMethod: nodejs16.x
+      SamResourceId: userLogin
+  userRegister:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: userRegister
+      Handler: userRegister.handler
+      Description: A Lambda function that register the user.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/register
+            Method: POST
+      Layers:
+      - Ref: DBServiceLayer
+    Metadata:
+      BuildMethod: nodejs16.x
+      SamResourceId: userRegister
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Stage/
