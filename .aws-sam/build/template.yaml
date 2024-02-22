@@ -27,6 +27,14 @@ Globals:
   Function:
     Environment:
       Variables:
+        DB_USER:
+          Ref: DB_USER
+        DB_NAME:
+          Ref: DB_NAME
+        DB_PASS:
+          Ref: DB_PASS
+        DB_URL:
+          Ref: DB_URL
         DB_URI: mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority
     Runtime: nodejs16.x
     MemorySize: 128
