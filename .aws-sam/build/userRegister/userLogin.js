@@ -1,8 +1,7 @@
 const { connectDatabase } = require("db-service/config/db");
-const { User } = require("db-service/models/user");
-const { generateOTP } = require("db-service/utils/helper");
+const { userModel } = require("db-service/models/userModel");
 
-module.exports = exports.handler = async (event) => {
+module.export = exports.handler = async (event) => {
 
   try {
     await connectDatabase();

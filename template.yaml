@@ -30,11 +30,12 @@ Globals:
   Function:
     Environment:
       Variables:
-        DB_USER: !Ref DB_USER
-        DB_NAME: !Ref DB_NAME
-        DB_PASS: !Ref DB_PASS
-        DB_URL:  !Ref DB_URL
+        DB_USER: simpli5-test #!Ref DB_USER
+        DB_NAME: simpli5-test #!Ref DB_NAME
+        DB_PASS: s8VVE5MFRns4DDWv #!Ref DB_PASS
+        DB_URL:  'mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority' #!Ref DB_URL
         DB_URI: 'mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority'
+        SMS_ENABLED: 0 #!Ref SMS_ENABLED
     Runtime: nodejs16.x
     MemorySize: 128
     Timeout: 60
@@ -53,7 +54,7 @@ Resources:
       LicenseInfo: 'MIT'
       RetentionPolicy: Retain
 
-  # This is a Lambda function config associated with the source code: get-all-items.js
+  # user Login api
   userLogin:
     Type: AWS::Serverless::Function
     Properties:
@@ -71,7 +72,7 @@ Resources:
     Metadata:
       BuildMethod: nodejs16.x
 
-  # This is a Lambda function config associated with the source code: get-all-items.js
+  # userRegister api
   userRegister:
     Type: AWS::Serverless::Function
     Properties:
@@ -83,6 +84,24 @@ Resources:
           Type: Api
           Properties:
             Path: /users/register
+            Method: POST
+      Layers:
+        - !Ref DBServiceLayer
+    Metadata:
+      BuildMethod: nodejs16.x
+
+  # verify OTP api
+  verifyOtp:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/handlers/users
+      Handler: verifyOtp.handler
+      Description: A Lambda function that register the user.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/verify-otp
             Method: POST
       Layers:
         - !Ref DBServiceLayer

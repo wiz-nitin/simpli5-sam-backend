@@ -27,15 +27,12 @@ Globals:
   Function:
     Environment:
       Variables:
-        DB_USER:
-          Ref: DB_USER
-        DB_NAME:
-          Ref: DB_NAME
-        DB_PASS:
-          Ref: DB_PASS
-        DB_URL:
-          Ref: DB_URL
+        DB_USER: simpli5-test
+        DB_NAME: simpli5-test
+        DB_PASS: s8VVE5MFRns4DDWv
+        DB_URL: mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority
         DB_URI: mongodb+srv://simpli5-test:s8VVE5MFRns4DDWv@simpli5-test.kmdsbv3.mongodb.net/simpli5?retryWrites=true&w=majority
+        SMS_ENABLED: 0
     Runtime: nodejs16.x
     MemorySize: 128
     Timeout: 60
@@ -84,6 +81,23 @@ Resources:
     Metadata:
       BuildMethod: nodejs16.x
       SamResourceId: userRegister
+  verifyOtp:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: verifyOtp
+      Handler: verifyOtp.handler
+      Description: A Lambda function that register the user.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/verify-otp
+            Method: POST
+      Layers:
+      - Ref: DBServiceLayer
+    Metadata:
+      BuildMethod: nodejs16.x
+      SamResourceId: verifyOtp
 Outputs:
   WebEndpoint:
     Description: API Gateway endpoint URL for Prod stage
