@@ -20,7 +20,7 @@ module.export = exports.handler = async (event) => {
   try {
     await connectDatabase();
     const body = JSON.parse(event.body);
-    const { phoneNumber, email, name } = body;
+    const { phoneNumber, email, name, displayName, dateOfBirth, gender } = body;
     // check the required fields
     if (!phoneNumber || !name || !email) {
       return helper.getResponseObject(false, HTTP_CODE.BAD_REQUEST, [], "Missing Parameters");
@@ -50,7 +50,11 @@ module.export = exports.handler = async (event) => {
 
     // return helper.getResponseObject(true, HTTP_CODE.SUCCESS, visitorData, "OTP sent succesfully");
 
-    let visitorData = await visitorModel.findOneAndUpdate({ phoneNumber }, { phoneNumber, email, name }, { upsert: true, new: true });
+    let visitorData = await visitorModel.findOneAndUpdate(
+      { phoneNumber },
+      { phoneNumber, email, name, displayName, dateOfBirth, gender },
+      { upsert: true, new: true }
+    );
     return helper.getResponseObject(true, HTTP_CODE.SUCCESS, visitorData, "User Register Succesfully");
   } catch (err) {
     console.error('handler: users | userRegister | error | ', err);
